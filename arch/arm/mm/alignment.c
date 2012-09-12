@@ -621,7 +621,6 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
 	unsigned long instr = *pinstr;
 	u16 tinst1 = (instr >> 16) & 0xffff;
 	u16 tinst2 = instr & 0xffff;
-	poffset->un = 0;
 
 	switch (tinst1 & 0xffe0) {
 	
@@ -713,6 +712,7 @@ do_alignment(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
  fixup:
 
 	regs->ARM_pc += isize;
+	offset.un = 0;
 
 	switch (CODING_BITS(instr)) {
 	case 0x00000000:	
