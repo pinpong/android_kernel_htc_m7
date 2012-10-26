@@ -916,7 +916,7 @@ static void __run_hrtimer(struct hrtimer *timer, ktime_t *now)
 	raw_spin_lock(&cpu_base->lock);
 
 	if (restart != HRTIMER_NORESTART) {
-		BUG_ON(timer->state != HRTIMER_STATE_CALLBACK);
+		BUG_ON(!(timer->state & HRTIMER_STATE_CALLBACK));
 		enqueue_hrtimer(timer, base);
 	}
 
