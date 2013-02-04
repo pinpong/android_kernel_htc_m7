@@ -155,8 +155,7 @@ void __ref cpu_die(void)
 	local_irq_disable();
 	mb();
 
-	
-	RCU_NONIDLE(complete(&cpu_died));
+	complete(&cpu_died);
 
 	platform_cpu_die(cpu);
 
