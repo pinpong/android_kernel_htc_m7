@@ -591,7 +591,6 @@ static void __init hfpll_init(struct scalable *sc,
 
 	
 	hfpll_set_rate(sc, tgt_s);
-	hfpll_enable(sc, false);
 }
 
 static int __cpuinit rpm_regulator_init(struct scalable *sc, enum vregs vreg,
@@ -755,7 +754,8 @@ static int __cpuinit init_clock_sources(struct scalable *sc,
 	regval &= ~(0x3 << 6);
 	set_l2_indirect_reg(sc->l2cpmr_iaddr, regval);
 
-	
+	if (tgt_s->src == HFPLL)
+		hfpll_enable(sc, false);
 	set_pri_clk_src(sc, tgt_s->pri_src_sel);
 	sc->cur_speed = tgt_s;
 
@@ -1033,7 +1033,7 @@ static struct notifier_block __cpuinitdata acpuclk_cpu_notifier = {
 	.notifier_call = acpuclk_cpu_callback,
 };
 
-static const int __init krait_needs_vmin(void)
+static const int krait_needs_vmin(void)
 {
 	switch (read_cpuid_id()) {
 	case 0x511F04D0: 
@@ -1045,7 +1045,7 @@ static const int __init krait_needs_vmin(void)
 	};
 }
 
-static void __init krait_apply_vmin(struct acpu_level *tbl)
+static void krait_apply_vmin(struct acpu_level *tbl)
 {
 	for (; tbl->speed.khz != 0; tbl++) {
 		if (tbl->vdd_core < 1150000)
