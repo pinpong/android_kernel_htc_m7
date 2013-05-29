@@ -237,7 +237,7 @@ static struct acpu_level tbl_faster[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS0_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   900000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   875000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   900000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   925000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   950000 },
@@ -258,7 +258,7 @@ static struct acpu_level tbl_PVS0_1700MHz[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS1_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   900000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   875000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   900000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   925000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   950000 },
@@ -279,7 +279,7 @@ static struct acpu_level tbl_PVS1_1700MHz[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS2_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   875000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   850000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   875000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   900000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   925000 },
@@ -321,7 +321,7 @@ static struct acpu_level tbl_PVS3_1700MHz[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS4_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   825000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   800000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   825000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   850000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   875000 },
@@ -342,7 +342,7 @@ static struct acpu_level tbl_PVS4_1700MHz[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS5_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   825000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   800000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   825000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   850000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   875000 },
@@ -363,7 +363,7 @@ static struct acpu_level tbl_PVS5_1700MHz[] __initdata = {
 };
 
 static struct acpu_level tbl_PVS6_1700MHz[] __initdata = {
-	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   825000 },
+	{ 1, {   135000, HFPLL, 1, 0x05 }, L2(0),   800000 },
 	{ 1, {   243000, HFPLL, 2, 0x12 }, L2(0),   825000 },
 	{ 1, {   324000, HFPLL, 2, 0x18 }, L2(0),   850000 },
 	{ 1, {   384000, PLL_8, 0, 0x00 }, L2(1),   875000 },
