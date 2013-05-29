@@ -880,6 +880,73 @@ static void __init bus_init(const struct l2_level *l2_level)
 #ifdef CONFIG_CPU_FREQ_MSM
 static struct cpufreq_frequency_table freq_table[NR_CPUS][35];
 
+#ifdef CONFIG_MSM_CPU_VOLTAGE_CONTROL
+#define HFPLL_MIN_VDD		700
+#define HFPLL_MAX_VDD		1300
+
+int get_freq_count(void)
+{
+	int i, freq_cnt = 0;
+
+	for (i = 0; drv.acpu_freq_tbl[i].speed.khz != 0
+			&& freq_cnt < ARRAY_SIZE(*freq_table); i++) {
+		if (drv.acpu_freq_tbl[i].use_for_scaling)
+			freq_cnt++;
+	}
+	return freq_cnt;
+}
+
+ssize_t show_UV_mV_table(struct cpufreq_policy *policy,
+					 char *buf)
+{
+	int i, len = 0;
+
+	if (!buf)
+		return -EINVAL;
+
+	for (i = 0; drv.acpu_freq_tbl[i].speed.khz; i++) {
+		if (!drv.acpu_freq_tbl[i].use_for_scaling)
+			continue;
+
+		len += sprintf(buf + len, "%lumhz: %i mV\n",
+			drv.acpu_freq_tbl[i].speed.khz / 1000,
+				drv.acpu_freq_tbl[i].vdd_core / 1000);
+	}
+	return len;
+}
+
+ssize_t store_UV_mV_table(struct cpufreq_policy *policy,
+					 char *buf, size_t count)
+{
+	unsigned int val;
+	char size_cur[get_freq_count()];
+	int i, ret = 0;
+
+	if (!buf)
+		return -EINVAL;
+
+	for (i = 0; i < ARRAY_SIZE(*freq_table); i++) {
+		if (!drv.acpu_freq_tbl[i].use_for_scaling)
+			continue;
+
+		ret = sscanf(buf, "%d\n", &val);
+		if (!ret)
+			return -EINVAL;
+
+		if (val > HFPLL_MAX_VDD)
+			val = HFPLL_MAX_VDD;
+		else if (val < HFPLL_MIN_VDD)
+			val = HFPLL_MIN_VDD;
+
+		drv.acpu_freq_tbl[i].vdd_core = val * 1000;
+
+		ret = sscanf(buf, "%s\n", size_cur);
+		buf += strlen(size_cur) + 1;
+	}
+	return ret;
+}
+#endif
+
 static void __init cpufreq_table_init(void)
 {
 	int cpu;
