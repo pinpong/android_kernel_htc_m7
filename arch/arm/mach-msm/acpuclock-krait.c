@@ -878,7 +878,7 @@ static void __init bus_init(const struct l2_level *l2_level)
 }
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[NR_CPUS][35];
+static struct cpufreq_frequency_table freq_table[NR_CPUS][38];
 
 #ifdef CONFIG_MSM_CPU_VOLTAGE_CONTROL
 #define HFPLL_MIN_VDD		700
