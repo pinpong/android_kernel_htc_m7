@@ -57,8 +57,8 @@ struct snd_msm {
 	struct msm_audio *prtd;
 	unsigned volume;
 };
-static struct snd_msm compressed_audio = {NULL, 0} ;
-static struct snd_msm compressed2_audio = {NULL, 0} ;
+static struct snd_msm compressed_audio = {NULL, 0x20002000} ;
+static struct snd_msm compressed2_audio = {NULL, 0x20002000} ;
 
 static struct audio_locks the_locks;
 
@@ -514,12 +514,12 @@ static int msm_compr_trigger(struct snd_pcm_substream *substream, int cmd)
 				soc_prtd->dai_link->be_id,
 				prtd->session_id, substream->stream, 1);
 		}
+		atomic_set(&prtd->pending_buffer, 1);
 	case SNDRV_PCM_TRIGGER_RESUME:
 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
 		pr_debug("[%p] %s: Trigger start/resume\n", prtd, __func__);
 		q6asm_run_nowait(prtd->audio_client, 0, 0, 0);
 		atomic_set(&prtd->start, 1);
-		
 		break;
 	case SNDRV_PCM_TRIGGER_STOP:
 		pr_debug("[%p] SNDRV_PCM_TRIGGER_STOP\n", prtd);
@@ -602,6 +602,7 @@ static int msm_compr_open(struct snd_pcm_substream *substream)
 		return -ENOMEM;
 	}
 
+	prtd->audio_client->perf_mode = false;
 	pr_info("[%p] %s: session ID %d\n", prtd, __func__, prtd->audio_client->session);
 
 	prtd->session_id = prtd->audio_client->session;
@@ -645,8 +646,9 @@ int compressed_set_volume(unsigned volume)
 {
 	int rc = 0;
 	if (compressed_audio.prtd && compressed_audio.prtd->audio_client) {
-		rc = q6asm_set_volume(compressed_audio.prtd->audio_client,
-								 volume);
+		rc = q6asm_set_lrgain(compressed_audio.prtd->audio_client,
+						(volume >> 16) & 0xFFFF,
+						volume & 0xFFFF);
 		if (rc < 0) {
 			pr_err("[%p] %s: Send Volume command failed"
 					" rc=%d\n", compressed_audio.prtd, __func__, rc);
@@ -870,7 +872,9 @@ static int msm_compr_hw_params(struct snd_pcm_substream *substream,
 			}
 			msm_pcm_routing_reg_phy_stream(
 				soc_prtd->dai_link->be_id,
-				prtd->session_id, substream->stream);
+				prtd->audio_client->perf_mode,
+				prtd->session_id,
+				substream->stream);
 
 			break;
 		}

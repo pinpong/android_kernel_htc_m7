@@ -1394,13 +1394,13 @@ int usb_suspend(struct device *dev, pm_message_t msg)
 	struct usb_device	*udev = to_usb_device(dev);
 
 	if (udev->bus->skip_resume) {
-		if (udev->state == USB_STATE_SUSPENDED) {
-			return 0;
-		} else {
-			dev_err(dev, "abort suspend\n");
-			return -EBUSY;
-		}
-	}
+   	 if (udev->state == USB_STATE_SUSPENDED) {
+    	  return 0;
+   	 } else {
+     	 dev_err(dev, "abort suspend\n");
+      	return -EBUSY;
+    	}
+ 	 }
 
 	unbind_no_pm_drivers_interfaces(udev);
 
@@ -1432,13 +1432,14 @@ int usb_resume(struct device *dev, pm_message_t msg)
 	int			status;
 
 	/*
-	 * Some buses would like to keep their devices in suspend
-	 * state after system resume.  Their resume happen when
-	 * a remote wakeup is detected or interface driver start
-	 * I/O.
-	 */
-	if (udev->bus->skip_resume)
-		return 0;
+         * Some buses would like to keep their devices in suspend
+         * state after system resume.  Their resume happen when
+         * a remote wakeup is detected or interface driver start
+         * I/O.
+         */
+
+	  if (udev->bus->skip_resume)
+               return 0;
 
 	pm_runtime_get_sync(dev->parent);
 	status = usb_resume_both(udev, msg);

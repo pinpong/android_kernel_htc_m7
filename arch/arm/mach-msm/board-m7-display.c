@@ -2099,9 +2099,6 @@ static int __init mipi_cmd_jdi_renesas_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-        //	pinfo.width = 58;
-        //	pinfo.height = 103;
-        //	pinfo.camera_backlight = 183;
 
 	pinfo.lcdc.h_back_porch = 27;
 	pinfo.lcdc.h_front_porch = 38;
@@ -2178,9 +2175,6 @@ static int __init mipi_cmd_sharp_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-        //        pinfo.width = 58;
-        //        pinfo.height = 103;
-        //	pinfo.camera_backlight = 183;
 
 	pinfo.lcdc.h_back_porch = 27;
 	pinfo.lcdc.h_front_porch = 38;
@@ -2192,6 +2186,11 @@ static int __init mipi_cmd_sharp_init(void)
 	pinfo.lcd.v_back_porch = pinfo.lcdc.v_back_porch;
 	pinfo.lcd.v_front_porch = pinfo.lcdc.v_front_porch;
 	pinfo.lcd.v_pulse_width = pinfo.lcdc.v_pulse_width;
+
+	pinfo.lcd.primary_vsync_init = pinfo.yres;
+	pinfo.lcd.primary_rdptr_irq = 0;
+	pinfo.lcd.primary_start_pos = pinfo.yres +
+		pinfo.lcd.v_back_porch + pinfo.lcd.v_front_porch - 1;
 
 	pinfo.lcdc.border_clr = 0;	
 	pinfo.lcdc.underflow_clr = 0xff;	
@@ -2259,9 +2258,6 @@ static int __init mipi_video_sharp_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-        //	pinfo.width = 61;
-        //	pinfo.height = 110;
-        //	pinfo.camera_backlight = 176;
 
 	pinfo.lcdc.h_back_porch = 58;
 	pinfo.lcdc.h_front_porch = 100;
@@ -2273,6 +2269,11 @@ static int __init mipi_video_sharp_init(void)
 	pinfo.lcd.v_back_porch = 4;
 	pinfo.lcd.v_front_porch = 4;
 	pinfo.lcd.v_pulse_width = 2;
+
+	pinfo.lcd.primary_vsync_init = pinfo.yres;
+	pinfo.lcd.primary_rdptr_irq = 0;
+	pinfo.lcd.primary_start_pos = pinfo.yres +
+		pinfo.lcd.v_back_porch + pinfo.lcd.v_front_porch - 1;
 
 	pinfo.lcdc.border_clr = 0;	
 	pinfo.lcdc.underflow_clr = 0xff;	
@@ -2344,9 +2345,6 @@ static int __init mipi_video_sony_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-        //	pinfo.width = 61;
-        //	pinfo.height = 110;
-        //	pinfo.camera_backlight = 176;
 
 	pinfo.lcdc.h_back_porch = 58;
 	pinfo.lcdc.h_front_porch = 100;
@@ -2358,6 +2356,11 @@ static int __init mipi_video_sony_init(void)
 	pinfo.lcd.v_back_porch = 3;
 	pinfo.lcd.v_front_porch = 3;
 	pinfo.lcd.v_pulse_width = 2;
+
+	pinfo.lcd.primary_vsync_init = pinfo.yres;
+	pinfo.lcd.primary_rdptr_irq = 0;
+	pinfo.lcd.primary_start_pos = pinfo.yres +
+		pinfo.lcd.v_back_porch + pinfo.lcd.v_front_porch - 1;
 
 	pinfo.lcdc.border_clr = 0;	
 	pinfo.lcdc.underflow_clr = 0xff;	
@@ -2420,9 +2423,6 @@ static int __init mipi_command_samsung_init(void)
 	pinfo.pdest = DISPLAY_1;
 	pinfo.wait_cycle = 0;
 	pinfo.bpp = 24;
-        //        pinfo.width = 58;
-        //        pinfo.height = 103;
-        //	pinfo.camera_backlight = 183;
 
 	pinfo.lcdc.h_back_porch = 27;
 	pinfo.lcdc.h_front_porch = 38;
@@ -2434,6 +2434,11 @@ static int __init mipi_command_samsung_init(void)
 	pinfo.lcd.v_back_porch = pinfo.lcdc.v_back_porch;
 	pinfo.lcd.v_front_porch = pinfo.lcdc.v_front_porch;
 	pinfo.lcd.v_pulse_width = pinfo.lcdc.v_pulse_width;
+
+	pinfo.lcd.primary_vsync_init = pinfo.yres;
+	pinfo.lcd.primary_rdptr_irq = 0;
+	pinfo.lcd.primary_start_pos = pinfo.yres +
+		pinfo.lcd.v_back_porch + pinfo.lcd.v_front_porch - 1;
 
 	pinfo.lcdc.border_clr = 0;	
 	pinfo.lcdc.underflow_clr = 0xff;	
@@ -2472,7 +2477,6 @@ static int __init mipi_command_samsung_init(void)
 
 	pinfo.mipi.frame_rate = 60;
 	
-        //	pinfo.lcdc.no_set_tear = 1;
 
 	pinfo.mipi.dsi_phy_db = &dsi_jdi_cmd_mode_phy_db;
 
