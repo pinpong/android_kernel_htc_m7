@@ -349,11 +349,11 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   =
-AFLAGS_MODULE   =
+CFLAGS_MODULE   = -fno-pic -mtune=cortex-a15 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
+AFLAGS_MODULE   = -fno-pic -mtune=cortex-a15 -mfpu=neon-vfpv4 -mvectorize-with-neon-quad
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL  = -mcpu=cortex-a15 -mfpu=neon -ftree-vectorize
-AFLAGS_KERNEL  = -mcpu=cortex-a15 -mfpu=neon -ftree-vectorize 
+CFLAGS_KERNEL  = -mtune=cortex-a15 -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad
+AFLAGS_KERNEL  = -mtune=cortex-a15 -mfpu=neon-vfpv4 -ftree-vectorize -mvectorize-with-neon-quad
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -366,11 +366,13 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+KBUILD_CFLAGS   := -Wstrict-prototypes -Wno-trigraphs \
+                   -fno-strict-aliasing -fno-common -Wno-format-security \
+                   -fno-delete-null-pointer-checks -mno-unaligned-access \
+                   -mtune=cortex-a15 -mfpu=neon -funsafe-math-optimizations \
+                   -fsingle-precision-constant -fpredictive-commoning -fipa-cp-clone \
+                   -fgcse-after-reload -ftree-vectorize -pipe -funswitch-loops
+
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
