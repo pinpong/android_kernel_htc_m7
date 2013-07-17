@@ -5788,11 +5788,7 @@ static struct clk_lookup msm_clocks_8064_r2[] = {
 	CLK_LOOKUP("core_clk",		gp1_clk.c,		""),
 	CLK_LOOKUP("core_clk",		gp2_clk.c,		""),
 	CLK_LOOKUP("core_clk",		gsbi1_uart_clk.c, "msm_serial_hsl.1"),
-#ifdef CONFIG_SERIAL_CIR
-	CLK_LOOKUP("core_clk",		gsbi2_uart_clk.c, "msm_serial_hsl.4"),
-#else
 	CLK_LOOKUP("core_clk",		gsbi2_uart_clk.c, "msm_serial_hsl.3"),
-#endif
 #ifdef CONFIG_QSC_MODEM
 	CLK_LOOKUP("core_clk",		gsbi1_uart_clk.c,	"msm_serial_hs.1"),
 	CLK_LOOKUP("iface_clk",		gsbi1_p_clk.c,		"msm_serial_hs.1"),
@@ -5800,7 +5796,7 @@ static struct clk_lookup msm_clocks_8064_r2[] = {
 #ifdef CONFIG_SERIAL_IRDA
 	CLK_LOOKUP("core_clk",		gsbi3_uart_clk.c,	"msm_serial_irda.2"),
 #elif defined CONFIG_SERIAL_CIR
-	CLK_LOOKUP("core_clk",		gsbi3_uart_clk.c,	"msm_serial_cir.3"),
+	CLK_LOOKUP("core_clk",		gsbi3_uart_clk.c,	"msm_serial_cir.2"),
 #else
 	CLK_LOOKUP("core_clk",		gsbi3_uart_clk.c,	""),
 #endif
@@ -5858,16 +5854,12 @@ static struct clk_lookup msm_clocks_8064_r2[] = {
 	CLK_LOOKUP("iface_clk",		gsbi1_p_clk.c,	"msm_serial_hsl.1"),
 	CLK_LOOKUP("iface_clk",		gsbi1_p_clk.c,	"qup_i2c.0"),
 	CLK_LOOKUP("iface_clk",		gsbi2_p_clk.c,		"qup_i2c.2"),
-#ifdef CONFIG_SERIAL_CIR
-	CLK_LOOKUP("iface_clk",		gsbi2_p_clk.c,	"msm_serial_hsl.4"),
-#else
 	CLK_LOOKUP("iface_clk",		gsbi2_p_clk.c,	"msm_serial_hsl.3"),
-#endif
 #ifdef CONFIG_SERIAL_IRDA
 	CLK_LOOKUP("iface_clk",		gsbi3_p_clk.c,		"msm_serial_irda.2"),
 #endif
 #ifdef CONFIG_SERIAL_CIR
-	CLK_LOOKUP("iface_clk",		gsbi3_p_clk.c,		"msm_serial_cir.3"),
+	CLK_LOOKUP("iface_clk",		gsbi3_p_clk.c,		"msm_serial_cir.2"),
 #endif
 	CLK_LOOKUP("iface_clk",		gsbi3_p_clk.c,		"qup_i2c.3"),
 #ifdef CONFIG_GSBI4_UARTDM
