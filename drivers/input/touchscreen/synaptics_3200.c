@@ -179,7 +179,7 @@ extern uint8_t touchscreen_is_on(void)
 #define HOME_BUTTON		818
 #define MENU_BUTTON		1335
 
-int pwp_switch = 1; // 1 -> pocket wake protection on, 0 - off
+int pwp_switch = 1; // 1 -> pocket wake protection on, 2 -> pocket wake protection with only near check , no dark check ;  0 - off
 
 int l2m_2_phase = 0; // 0 -> logo used as power off on long tap, and short tap syncs input on/off at same time,  1 -> logo used as full menu button, sync on/off events separately
 
@@ -269,7 +269,7 @@ EXPORT_SYMBOL(sweep2wake_setleddev);
 static int break_longtap_count = 0;
 
 static void sweep2wake_presspwr(struct work_struct * sweep2wake_presspwr_work) {
-	if (scr_suspended == true && pwp_switch == 1 && power_key_check_in_pocket()) return; // don't wake if in pocket
+	if ( scr_suspended == true && pwp_switch >= 1 && power_key_check_in_pocket((pwp_switch == 1)?1:0) ) return; // don't wake if in pocket
 
 	if (!mutex_trylock(&pwrlock))
 	    return;
@@ -386,7 +386,7 @@ static void sweep2wake_longtap_count(struct work_struct * sweep2wake_longtap_cou
 		else
 		if ( scr_suspended == true || ( is_wake_option_set() && ( l2m_switch == 0 || (l2m_switch == 1 && l2m_2_phase == 0) ) ) ) // screen is off, or wake option is set with logo2menu is not used, or logo2menu is set but not 2_phase
 		{
-			if (scr_suspended == false || pwp_switch == 0 || (pwp_switch == 1 && !power_key_check_in_pocket())) {
+			if (scr_suspended == false || pwp_switch == 0 || (pwp_switch >= 1 && !power_key_check_in_pocket((pwp_switch==1)?1:0))) {
 				if (sleep_wake_vibration_time)
 				{
 					vibrate(sleep_wake_vibration_time * 5);
@@ -2168,7 +2168,7 @@ static ssize_t synaptics_pocket_detect_show(struct device *dev,
 static ssize_t synaptics_pocket_detect_dump(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
-	if (buf[0] >= '0' && buf[0] <= '1' && buf[1] == '\n')
+	if (buf[0] >= '0' && buf[0] <= '2' && buf[1] == '\n')
 		if (pwp_switch != buf[0] - '0') {
 			pwp_switch = buf[0] - '0';
 		}
@@ -2176,7 +2176,9 @@ static ssize_t synaptics_pocket_detect_dump(struct device *dev,
 	if (pwp_switch == 0) 
 		printk(KERN_INFO "[POCKETWAKEPROT]: Disabled.\n");
 	else if (pwp_switch == 1)
-		printk(KERN_INFO "[POCKETWAKEPROT]: Enabled.\n");
+		printk(KERN_INFO "[POCKETWAKEPROT]: Enabled with Dark + Near detection.\n");
+	else if (pwp_switch == 2)
+		printk(KERN_INFO "[POCKETWAKEPROT]: Enabled with only Near detection.\n");
 
 	return count;
 }
