@@ -18,16 +18,24 @@ make -j`grep 'processor' /proc/cpuinfo | wc -l` CROSS_COMPILE=$TOOLCHAIN >> comp
 
 # copy modules
 find -name '*.ko' -exec cp -av {} ../m7-cwm_zip/system/lib/modules/ \;
+find -name '*.ko' -exec cp -av {} ../m7spr-cwm_zip/system/lib/modules/ \;
 
 # copy kernel image
 cp arch/arm/boot/zImage ../m7-cwm_zip/kernel/kernel
+cp arch/arm/boot/zImage ../m7spr-cwm_zip/kernel/kernel
 
 # strip modules
 ${TOOLCHAIN}strip --strip-unneeded ../m7-cwm_zip/system/lib/modules/*ko
+${TOOLCHAIN}strip --strip-unneeded ../m7spr-cwm_zip/system/lib/modules/*ko
 
 # create cwm zip
 cd ../m7-cwm_zip
 find ./ -name '*~' | xargs rm
 rm *.zip
 TIMESTAMP=thoravukk-m7-`date +%Y%m%d-%T`
+zip -r $TIMESTAMP-cwm.zip *
+cd ../m7spr-cwm_zip
+find ./ -name '*~' | xargs rm
+rm *.zip
+TIMESTAMP=thoravukk-m7spr-`date +%Y%m%d-%T`
 zip -r $TIMESTAMP-cwm.zip *
