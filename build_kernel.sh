@@ -32,10 +32,9 @@ ${TOOLCHAIN}strip --strip-unneeded ../m7spr-cwm_zip/system/lib/modules/*ko
 cd ../m7-cwm_zip
 find ./ -name '*~' | xargs rm
 rm *.zip
-TIMESTAMP=thoravukk-m7-`date +%Y%m%d-%T`
-zip -r $TIMESTAMP-cwm.zip *
+TIMESTAMP=thoravukk-`date +%Y%m%d-%T`
+zip -r m7-$TIMESTAMP-cwm.zip *
 cd ../m7spr-cwm_zip
 find ./ -name '*~' | xargs rm
 rm *.zip
-TIMESTAMP=thoravukk-m7spr-`date +%Y%m%d-%T`
-zip -r $TIMESTAMP-cwm.zip *
+zip -r m7spr-$TIMESTAMP-cwm.zip *
