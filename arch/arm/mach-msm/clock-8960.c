@@ -556,7 +556,7 @@ static struct pll_clk pll15_clk = {
 	.parent = &pxo_clk.c,
 	.c = {
 		.dbg_name = "pll15_clk",
-		.rate = 900000000,
+		.rate = 975000000,
 		.ops = &clk_ops_local_pll,
 		CLK_INIT(pll15_clk.c),
 		.warned = true,
@@ -6753,9 +6753,9 @@ static void __init reg_init(void)
 	}
 
 	if (cpu_is_apq8064()) {
-			pll15_config.l = 0x21 | BVAL(31, 7, 0x620);
-   			pll15_config.m = 0x1;
-    		pll15_config.n = 0x3; 
+		pll15_config.l = 0x21 | BVAL(31, 7, 0x620)	;
+		pll15_config.m = 0x1;	
+		pll15_config.n = 0x3; 
 		
 		configure_sr_pll(&pll15_config, &pll15_regs, 0);
 	} else if (cpu_is_apq8064ab()) {
