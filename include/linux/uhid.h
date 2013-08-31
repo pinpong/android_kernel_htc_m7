@@ -13,11 +13,6 @@
  * any later version.
  */
 
-/*
- * Public header for user-space communication. We try to keep every structure
- * aligned but to be safe we also use __attribute__((__packed__)). Therefore,
- * the communication should be ABI compatible even between architectures.
- */
 
 #include <linux/input.h>
 #include <linux/types.h>
@@ -101,4 +96,4 @@ struct uhid_event {
 	} u;
 } __attribute__((__packed__));
 
-#endif /* __UHID_H_ */
+#endif 
