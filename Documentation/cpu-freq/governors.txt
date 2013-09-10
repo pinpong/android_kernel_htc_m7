@@ -28,6 +28,7 @@ Contents:
 2.3  Userspace
 2.4  Ondemand
 2.5  Conservative
+2.6  Interactive
 
 3.   The Governor Interface in the CPUfreq Core
 
@@ -324,4 +325,3 @@ use __cpufreq_driver_target only in these cases. In all other cases
 (for example, when there's a "daemonized" function that wakes up 
 every second), use cpufreq_driver_target to lock the cpufreq per-CPU
 lock before the command is passed to the cpufreq processor driver.
-
