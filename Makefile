@@ -573,7 +573,7 @@ ifdef CONFIG_CC_OPTIMIZE_DEFAULT
 KBUILD_CFLAGS += -O2
 endif
 ifdef CONFIG_CC_OPTIMIZE_MORE
-KBUILD_CFLAGS += -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize
+KBUILD_CFLAGS += -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize  -fno-inline-functions
 endif
 ifdef CONFIG_CC_OPTIMIZE_FAST
 KBUILD_CFLAGS += -Ofast -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize
