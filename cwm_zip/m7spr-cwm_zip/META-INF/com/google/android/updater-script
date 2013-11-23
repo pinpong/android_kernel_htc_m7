@@ -1,0 +1,30 @@
+ui_print("");
+ui_print("");
+assert(getprop("ro.product.device") == "m7spr" || getprop("ro.build.product") == "m7spr" ||
+       getprop("ro.product.device") == "m7wls" || getprop("ro.build.product") == "m7wls");
+
+ui_print("flashing thoravukk kernel");
+ui_print("");
+ui_print("");
+ui_print("mounting system");
+ui_print("");
+ui_print("");
+mount("ext4", "EMMC", "/dev/block/mmcblk0p37", "/system");
+ui_print("copying modules");
+ui_print("");
+ui_print("");
+package_extract_dir("system", "/system");
+set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
+ui_print("unmounting system");
+ui_print("");
+ui_print("");
+unmount("/system");
+package_extract_dir("kernel", "/tmp");
+set_perm(0, 0, 0755, "/tmp/mkbootimg.sh");
+set_perm(0, 0, 0777, "/tmp/mkbootimg");
+set_perm(0, 0, 0777, "/tmp/unpackbootimg");
+run_program("/sbin/busybox", "dd", "if=/dev/block/mmcblk0p35", "of=/tmp/boot.img");
+run_program("/tmp/unpackbootimg", "-i", "/tmp/boot.img", "-o", "/tmp/");
+run_program("/tmp/mkbootimg.sh");
+run_program("/sbin/busybox", "dd", "if=/tmp/newboot.img", "of=/dev/block/mmcblk0p35");
+ui_print("Done");

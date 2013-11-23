@@ -81,8 +81,11 @@ GRTAGS
 GSYMS
 GTAGS
 
+# private environment
 *.orig
 *.rej
 *~
 \#*#
 compile.log
+*zip
+kernel
