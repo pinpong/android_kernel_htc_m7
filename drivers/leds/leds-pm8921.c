@@ -75,6 +75,9 @@ static int virtual_key_state;
 static int current_blink = 0;
 static int lut_coefficient = 100;
 static int dutys_array[64];
+
+static int blink_buttons = 1;
+
 u8 pm8xxxx_led_pwm_mode(int flag)
 {
 	u8 mode = 0;
