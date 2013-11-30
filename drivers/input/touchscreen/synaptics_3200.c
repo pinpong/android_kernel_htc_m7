@@ -2209,12 +2209,10 @@ static void synaptics_ts_s2w_check_wake(void)
 static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 {
 	int ret;
-	uint8_t buf[ts->finger_support * 8];
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
 	int report_ret = 0;
-	int ts_is_on = 0;
-	ts_is_on = touchscreen_is_on() ? 1:0;
 #endif
+	uint8_t buf[ts->finger_support * 8];
 	memset(buf, 0x0, sizeof(buf));
 	if (ts->package_id < 3400)
 		ret = i2c_syn_read(ts->client,
@@ -2319,15 +2317,9 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 		if (ts->htc_event == SYN_AND_REPORT_TYPE_B && finger_release_changed) {
 			for (i = 0; i < ts->finger_support; i++) {
 				if (finger_release_changed & BIT(i)) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-					if (ts_is_on) {
-#endif
 					input_mt_slot(ts->input_dev, i);
 					input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, 0);
 					ts->tap_suppression &= ~BIT(i);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-					}
-#endif
 				}
 			}
 		}
@@ -2336,38 +2328,20 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 ) {
 			if (ts->htc_event == SYN_AND_REPORT_TYPE_A) {
 				
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE, 0);
 					input_report_abs(ts->input_dev, ABS_MT_POSITION, 1 << 31);
 				}
 				input_mt_sync(ts->input_dev);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			} else if (ts->htc_event == SYN_AND_REPORT_TYPE_B) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE, 0);
 					input_report_abs(ts->input_dev, ABS_MT_POSITION, 1 << 31);
 				}
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			}
 			else if (ts->htc_event == SYN_AND_REPORT_TYPE_HTC) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE, 0);
 				input_report_abs(ts->input_dev, ABS_MT_POSITION, 1 << 31);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			}
 
 #ifdef SYN_FILTER_CONTROL
@@ -2563,7 +2537,6 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 							report_ret = report_htc_logo_area(last_touch_position_x,last_touch_position_y);
 							if (!report_ret)
 							{
-							if (ts_is_on) {
 #endif
 							input_report_abs(ts->input_dev, ABS_MT_TRACKING_ID, i);
 							input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR,
@@ -2578,8 +2551,7 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 								finger_data[i][1]);
 							input_mt_sync(ts->input_dev);
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-							} // ts_is_on
-							} else // !report_ret
+							} else
 							{
 								printk("[L2M] till in area %d %d",last_touch_position_x,last_touch_position_y);
 								if (scr_suspended == false)
@@ -2651,7 +2623,6 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 							report_ret = report_htc_logo_area(last_touch_position_x,last_touch_position_y);
 							if (!report_ret)
 							{
-							if (ts_is_on) {
 #endif
 							input_mt_slot(ts->input_dev, i);
 							input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER,
@@ -2667,7 +2638,6 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 							input_report_abs(ts->input_dev, ABS_MT_POSITION_Y,
 								finger_data[i][1]);
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-							} // ts_is_on
 							} else
 							{
 								printk("[L2M] till in area %d %d",last_touch_position_x,last_touch_position_y);
@@ -2733,7 +2703,6 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 							report_ret = report_htc_logo_area(last_touch_position_x,last_touch_position_y);
 							if (!report_ret)
 							{
-							if (ts_is_on) {
 #endif
 							input_report_abs(ts->input_dev, ABS_MT_TRACKING_ID, i);
 							input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE,
@@ -2742,7 +2711,6 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 								(finger_pressed == 0) << 31 |
 								finger_data[i][0] << 16 | finger_data[i][1]);
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-							} // ts_is_on
 							} else
 							{
 								printk("[L2M] till in area %d %d",last_touch_position_x,last_touch_position_y);
@@ -2897,13 +2865,8 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 #endif
 		}
 	}
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	if (ts_is_on) {
-#endif
 	input_sync(ts->input_dev);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	}
-#endif
+
 }
 
 static void synaptics_ts_report_func(struct synaptics_ts_data *ts)
@@ -2936,7 +2899,7 @@ static void synaptics_ts_report_func(struct synaptics_ts_data *ts)
 static int home_key_pressed = 0;
 static int back_key_pressed = 0;
 static unsigned int home_key_first_touch_time = 0;
-static unsigned int MIN_HOME_KEY_TOUCH_TIME_TO_WAKE = 22;
+static unsigned int MIN_HOME_KEY_TOUCH_TIME_TO_WAKE = 15;
 
 
 
@@ -2970,9 +2933,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 	int ret;
 	uint8_t data = 0;
 	uint16_t x_position = 0, y_position = 0;
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	int ts_is_on = touchscreen_is_on() ? 1:0;
-#endif
 
 	ret = i2c_syn_read(ts->client,
 		get_address_base(ts, 0x1A, DATA_BASE), &data, 1);
@@ -2994,9 +2954,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 				}
 			}
 			if (ts->htc_event == SYN_AND_REPORT_TYPE_A) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE,
 						100 << 16 | 100);
@@ -3015,13 +2972,7 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 				input_report_abs(ts->input_dev, ABS_MT_POSITION_Y,
 					y_position);
 				input_mt_sync(ts->input_dev);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			} else if (ts->htc_event == SYN_AND_REPORT_TYPE_B) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE,
 						100 << 16 | 100);
@@ -3041,9 +2992,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 					x_position);
 				input_report_abs(ts->input_dev, ABS_MT_POSITION_Y,
 					y_position);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			}
 		}
 		else if (data & 0x02) {
@@ -3064,9 +3012,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 				}
 			}
 			if (ts->htc_event == SYN_AND_REPORT_TYPE_A) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE,
 						100 << 16 | 100);
@@ -3085,13 +3030,7 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 				input_report_abs(ts->input_dev, ABS_MT_POSITION_Y,
 					y_position);
 				input_mt_sync(ts->input_dev);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			} else if (ts->htc_event == SYN_AND_REPORT_TYPE_B) {
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				if (ts_is_on) {
-#endif
 				if (ts->support_htc_event) {
 					input_report_abs(ts->input_dev, ABS_MT_AMPLITUDE,
 						100 << 16 | 100);
@@ -3111,9 +3050,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 					x_position);
 				input_report_abs(ts->input_dev, ABS_MT_POSITION_Y,
 					y_position);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-				}
-#endif
 			}
 		}
 	}else {
@@ -3149,8 +3085,6 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 		}
 		home_key_pressed = 0;
 		back_key_pressed = 0;
-
-		if (ts_is_on) {
 #endif
 		if (ts->htc_event == SYN_AND_REPORT_TYPE_A) {
 			if (ts->support_htc_event) {
@@ -3167,17 +3101,8 @@ static void synaptics_ts_button_func(struct synaptics_ts_data *ts)
 			input_mt_slot(ts->input_dev, 0);
 			input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, 0);
 		}
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-		}
-#endif
 	}
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	if (ts_is_on) {
-#endif
 	input_sync(ts->input_dev);
-#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
-	}
-#endif
 }
 
 static void synaptics_ts_status_func(struct synaptics_ts_data *ts)
