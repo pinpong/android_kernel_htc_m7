@@ -59,7 +59,15 @@ __rwsem_do_wake(struct rw_semaphore *sem, int wakewrite)
 	}
 
 	if (waiter->flags & RWSEM_WAITING_FOR_WRITE) {
-	wake_up_process(waiter->task);
+		sem->activity = -1;
+		list_del(&waiter->list);
+		tsk = waiter->task;
+		
+		smp_mb();
+		waiter->task = NULL;
+		wake_up_process(tsk);
+		put_task_struct(tsk);
+		goto out;
 	}
 
 	
@@ -90,10 +98,18 @@ static inline struct rw_semaphore *
 __rwsem_wake_one_writer(struct rw_semaphore *sem)
 {
 	struct rwsem_waiter *waiter;
+	struct task_struct *tsk;
+
+	sem->activity = -1;
 
 	waiter = list_entry(sem->wait_list.next, struct rwsem_waiter, list);
-	wake_up_process(waiter->task);
+	list_del(&waiter->list);
 
+	tsk = waiter->task;
+	smp_mb();
+	waiter->task = NULL;
+	wake_up_process(tsk);
+	put_task_struct(tsk);
 	return sem;
 }
 
@@ -165,24 +181,37 @@ void __sched __down_write_nested(struct rw_semaphore *sem, int subclass)
 
 	raw_spin_lock_irqsave(&sem->wait_lock, flags);
 
+	if (sem->activity == 0 && list_empty(&sem->wait_list)) {
+		
+		sem->activity = -1;
+		raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
+		goto out;
+	}
+
 	tsk = current;
+	set_task_state(tsk, TASK_UNINTERRUPTIBLE);
+
+	
 	waiter.task = tsk;
 	waiter.flags = RWSEM_WAITING_FOR_WRITE;
+	get_task_struct(tsk);
 
 	list_add_tail(&waiter.list, &sem->wait_list);
+
+	
+	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
+
 	
 	for (;;) {
-		if (sem->activity == 0)
+		if (!waiter.task)
 			break;
-		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
-		raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
 		schedule();
-		raw_spin_lock_irqsave(&sem->wait_lock, flags);
+		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
 	}
-	sem->activity = -1;
-	ist_del(&waiter.list);
 
-	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
+	tsk->state = TASK_RUNNING;
+ out:
+	;
 }
 
 void __sched __down_write(struct rw_semaphore *sem)
@@ -197,7 +226,7 @@ int __down_write_trylock(struct rw_semaphore *sem)
 
 	raw_spin_lock_irqsave(&sem->wait_lock, flags);
 
-	if (sem->activity == 0) {
+	if (sem->activity == 0 && list_empty(&sem->wait_list)) {
 		
 		sem->activity = -1;
 		ret = 1;
@@ -245,3 +274,4 @@ void __downgrade_write(struct rw_semaphore *sem)
 
 	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
 }
+
