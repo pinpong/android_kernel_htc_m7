@@ -180,7 +180,7 @@ void __sched __down_write_nested(struct rw_semaphore *sem, int subclass)
 		raw_spin_lock_irqsave(&sem->wait_lock, flags);
 	}
 	sem->activity = -1;
-	list_del(&waiter.list);
+	ist_del(&waiter.list);
 
 	raw_spin_unlock_irqrestore(&sem->wait_lock, flags);
 }
