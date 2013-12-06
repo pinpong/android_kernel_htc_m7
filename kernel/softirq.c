@@ -12,7 +12,7 @@
 
 #include <linux/export.h>
 #include <linux/kernel_stat.h>
-#include <linux/interrupt.h>kernel/softirq.c
+#include <linux/interrupt.h>
 #include <linux/init.h>
 #include <linux/mm.h>
 #include <linux/notifier.h>
@@ -135,13 +135,13 @@ void local_bh_enable_ip(unsigned long ip)
 }
 EXPORT_SYMBOL(local_bh_enable_ip);
 
-#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
+#define MAX_SOFTIRQ_RESTART 10
 
 asmlinkage void __do_softirq(void)
 {
 	struct softirq_action *h;
 	__u32 pending;
-	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
+	int max_restart = MAX_SOFTIRQ_RESTART;
 	int cpu;
 
 	pending = local_softirq_pending();
@@ -188,12 +188,11 @@ restart:
 	local_irq_disable();
 
 	pending = local_softirq_pending();
-	if (pending) {
-		if (time_before(jiffies, end) && !need_resched())
-			goto restart;
+	if (pending && --max_restart)
+		goto restart;
 
+	if (pending)
 		wakeup_softirqd();
-	}
 
 	lockdep_softirq_exit();
 
