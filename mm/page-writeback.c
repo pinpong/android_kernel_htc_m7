@@ -105,9 +105,6 @@ static unsigned long highmem_dirtyable_memory(unsigned long total)
 		x += zone_page_state(z, NR_FREE_PAGES) +
 		     zone_reclaimable_pages(z) - z->dirty_balance_reserve;
 	}
-	if ((long)x < 0)
-		x = 0;
-
 	return min(x, total);
 #else
 	return 0;
@@ -118,8 +115,8 @@ unsigned long global_dirtyable_memory(void)
 {
 	unsigned long x;
 
-	x = global_page_state(NR_FREE_PAGES) + global_reclaimable_pages();
-	x -= min(x, dirty_balance_reserve);
+	x = global_page_state(NR_FREE_PAGES) + global_reclaimable_pages() -
+	    dirty_balance_reserve;
 
 	if (!vm_highmem_is_dirtyable)
 		x -= highmem_dirtyable_memory(x);
@@ -161,11 +158,9 @@ void global_dirty_limits(unsigned long *pbackground, unsigned long *pdirty)
 
 static unsigned long zone_dirtyable_memory(struct zone *zone)
 {
-	unsigned long nr_pages = zone_page_state(zone, NR_FREE_PAGES) +
-		zone_reclaimable_pages(zone);
-
-	nr_pages -= min(nr_pages, zone->dirty_balance_reserve);
-	return nr_pages;
+	return zone_page_state(zone, NR_FREE_PAGES) +
+	       zone_reclaimable_pages(zone) -
+	       zone->dirty_balance_reserve;
 }
 
 static unsigned long zone_dirty_limit(struct zone *zone)
